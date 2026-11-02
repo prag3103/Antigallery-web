@@ -1,0 +1,408 @@
+:root {
+  --ink: #111;
+  --grey: #d9d9d9;
+  --muted: #8a8a8a;
+  --paper: #ffffff;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.page { min-height: 100dvh; padding: 24px; }
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+.wordmark { font-weight: 300; font-size: clamp(2.2rem, 8vw, 3.5rem); margin: 0; }
+.small { font-size: 0.8rem; }
+.muted { color: var(--muted); }
+
+.pill {
+  font-family: inherit;
+  font-size: 1rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--grey);
+  padding: 10px 32px;
+  cursor: pointer;
+}
+
+/* ── Session 2 ── */
+.stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.field {
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--grey);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+}
+.row .field { flex: 1; min-width: 200px; }
+
+.pill:disabled { opacity: 0.5; cursor: default; }
+.pill.small { font-size: 0.8rem; padding: 8px 18px; }
+
+.text-button {
+  font-family: inherit; font-size: inherit; color: inherit;
+  background: none; border: none; padding: 0; text-decoration: underline; cursor: pointer;
+}
+
+.error { color: #c0392b; }
+
+.card {
+  border: 1px solid var(--grey);
+  border-radius: 14px;
+  padding: 20px;
+  background: #fafafa;
+  max-width: none;
+}
+
+.library-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));  /* like GridItem(.adaptive) */
+  gap: 24px;
+}
+.tile { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; }
+.tile-cover { aspect-ratio: 8 / 7; background: var(--grey); }
+
+
+/* ── Session 3 ── */
+.gallery-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 880px;
+  margin: 0 auto 40px;
+}
+.gallery-tools .card.stack { max-width: none; }
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.thumb { position: relative; margin: 0; }
+.thumb img,
+.thumb video {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;        /* like .scaledToFill() + .clipped() */
+  display: block;
+  background: var(--grey);
+}
+.thumb figcaption { margin-top: 4px; }
+
+.play-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+/* ---------- Session 4: Flowerbed ---------- */
+.flowerbed {
+  width: 100%;
+  max-width: 960px;
+  margin: 48px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  overflow-x: clip;
+  text-align: left;
+}
+.fb-empty { text-align: center; }
+
+/* each cluster is a full-width line; its group sits left or right → zig-zag */
+.fb-cluster { display: flex; padding: 0 16px; }
+.fb-cluster.left  { justify-content: flex-start; }
+.fb-cluster.right { justify-content: flex-end; }
+
+.fb-group { display: flex; flex-direction: column; gap: 4px; }
+.fb-cluster.right .fb-group { align-items: flex-end; text-align: right; }
+
+.fb-title { margin: 0; font-size: calc(16px * var(--s)); font-weight: 400; }
+.fb-subtitle, .fb-hint, .fb-muted { margin: 0; color: #8a8a8a; }
+.fb-subtitle { font-size: max(10px, calc(11px * var(--s))); }
+.fb-hint { font-size: 10px; margin-top: 4px; }
+
+/* flower + card side by side, card tucked slightly into the flower */
+/* flower + card side by side, with breathing room that scales with the screen */
+/* flower + card side by side; gap comes from Flowerbed.jsx (24 phone / 56 wider), scaled */
+.fb-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--gap, 56) * var(--s) * 1px);
+}
+
+/* --- bloom --- */
+.fb-fade { opacity: 0; transition: opacity 0.9s ease var(--delay); }
+.is-bloomed .fb-fade { opacity: 1; }
+
+/* --- the flower --- */
+.fb-flower { position: relative; flex: none; }
+
+.fb-bloom {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transform: scale(0.3) rotate(-60deg);
+  transition: transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay),
+              opacity 0.9s ease var(--delay);
+}
+.is-bloomed .fb-bloom { opacity: 1; transform: none; }
+
+.fb-spin { position: absolute; }
+.fb-spin img { width: 100%; height: 100%; display: block; user-select: none; pointer-events: none; }
+
+.fb-glow {
+  position: absolute; inset: 0;
+  mix-blend-mode: screen;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  animation: fb-breathe 1.8s ease-in-out infinite alternate;
+}
+.fb-wedge {
+  position: absolute; inset: 0;
+  background: conic-gradient(from -32.4deg, rgba(255, 242, 204, 0.95) 0deg 64.8deg, transparent 64.8deg);
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 16%, transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 16%, transparent 100%);
+  filter: blur(6px);
+  transition: transform 0.2s ease;
+}
+@keyframes fb-breathe { from { opacity: 0.55; } to { opacity: 0.95; } }
+
+.fb-thumbs {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay),
+              opacity 0.6s ease var(--delay);
+}
+.is-bloomed .fb-thumbs { opacity: 1; transform: none; }
+
+.fb-thumb { position: absolute; background: #fff; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+.fb-thumb img, .fb-thumb video { display: block; object-fit: cover; }
+.fb-thumb.active {
+  z-index: 1;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px #fff, 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.fb-ring { position: absolute; inset: 0; z-index: 2; touch-action: none; cursor: grab; outline: none; }
+.fb-ring:active { cursor: grabbing; }
+
+/* --- the big card: every size follows --s --- */
+.fb-card {
+  position: relative; z-index: 3;           /* sits above the flower where they overlap */
+  box-sizing: border-box;
+  flex: none;
+  width: calc(170px * var(--s));
+  padding: calc(10px * var(--s));
+  display: flex; flex-direction: column; gap: 6px;
+  background: #d9d9d9;
+  border: 0; border-radius: 0;
+  color: inherit; font-family: inherit; text-align: left;
+  font-size: max(10px, calc(10px * var(--s)));
+  line-height: 1.35;
+  cursor: default;
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay),
+              opacity 0.9s ease var(--delay);
+}
+.fb-cluster.left  .fb-card { transform: translateX(40px); }
+.fb-cluster.right .fb-card { transform: translateX(-40px); }
+.is-bloomed .fb-card { opacity: 1; transform: none; }
+
+.fb-card-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;                          /* always a square, whatever the card width */
+  overflow: hidden;
+  animation: fb-swap 0.3s ease;
+}
+.fb-card-photo img, .fb-card-photo video { display: block; object-fit: cover; }
+@keyframes fb-swap { from { opacity: 0; transform: scale(0.96); } }
+
+.fb-card-meta { display: flex; justify-content: space-between; gap: 8px; }
+
+.fb-play {
+  position: absolute; right: 6px; bottom: 6px;
+  font-size: 11px; color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 6px; border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flowerbed *, .flowerbed *::before, .flowerbed *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    animation: none !important;
+  }
+}
+
+
+/* ---------- Session 5a: saving ---------- */
+.fb-card-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.fb-save {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+.fb-save:disabled { opacity: 0.5; cursor: wait; }
+
+
+/* ---------- Session 5b: view toggle + grid (iPhone Photos style) ---------- */
+
+/* --- iOS-style segmented control --- */
+.view-toggle-wrap { display: flex; justify-content: center; margin: 40px 0 8px; }
+
+.view-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(118, 118, 128, 0.12);
+}
+.view-toggle::before {                       /* the white sliding pill */
+  content: '';
+  position: absolute;
+  top: 3px; bottom: 3px; left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.view-toggle[data-mode='grid']::before { transform: translateX(100%); }
+
+.view-toggle button {
+  -webkit-appearance: none; appearance: none;   /* remove the browser's default button look */
+  position: relative; z-index: 1;
+  min-width: 112px;
+  padding: 6px 14px;
+  border: 0; border-radius: 8px;
+  background: none;
+  font: inherit; font-size: 13px;
+  color: #8a8a8a;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.view-toggle button.active { color: #111; }
+
+/* --- the grid --- */
+.grid-view {
+  width: 100%;
+  max-width: 1200px;
+  margin: 24px auto 0;
+  text-align: left;
+  animation: grid-in 0.4s ease;
+}
+@keyframes grid-in { from { opacity: 0; transform: translateY(8px); } }
+
+/* phones: break out of the page padding and go edge to edge, like the Photos app */
+@media (max-width: 600px) {
+  .grid-view { width: 100vw; margin-left: calc(50% - 50vw); }
+}
+
+.grid-section + .grid-section { margin-top: 28px; }
+
+/* frosted sticky header */
+.grid-header {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px;
+  padding: 10px 12px 8px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.grid-title { margin: 0; font-size: clamp(17px, 2.2vw, 22px); font-weight: 600; letter-spacing: -0.01em; }
+.grid-subtitle { font-size: 12px; color: #8a8a8a; }
+
+/* columns grow with the screen: 3 → 4 → 5 → 6 → 7 */
+.grid-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+@media (min-width: 480px)  { .grid-tiles { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 768px)  { .grid-tiles { grid-template-columns: repeat(5, 1fr); gap: 3px; } }
+@media (min-width: 1024px) { .grid-tiles { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 1280px) { .grid-tiles { grid-template-columns: repeat(7, 1fr); } }
+
+.grid-tile { position: relative; aspect-ratio: 1; overflow: hidden; background: #f0f0f0; }
+
+.grid-open {
+  -webkit-appearance: none; appearance: none;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; border-radius: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.grid-open img, .grid-open video {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;                          /* fill the square, crop the edges */
+  transition: transform 0.25s ease, filter 0.15s ease;
+}
+.grid-open:active img, .grid-open:active video { filter: brightness(0.8); }   /* press feedback */
+@media (hover: hover) {
+  .grid-open:hover img, .grid-open:hover video { transform: scale(1.03); }
+}
+
+/* small video marker, bottom-right like Photos */
+.grid-video {
+  position: absolute; right: 6px; bottom: 4px;
+  font-size: 11px; color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* frosted round save button, top-right */
+.grid-save {
+  -webkit-appearance: none; appearance: none;
+  position: absolute; top: 5px; right: 5px;
+  min-width: 26px; height: 26px;
+  padding: 0 7px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font: inherit; font-size: 12px;
+  cursor: pointer;
+}
+.grid-save:disabled { cursor: wait; }
+
+@media (hover: hover) {
+  .grid-save { opacity: 0; transition: opacity 0.2s; }
+  .grid-tile:hover .grid-save,
+  .grid-save:focus-visible,
+  .grid-save:disabled { opacity: 1; }
+}
